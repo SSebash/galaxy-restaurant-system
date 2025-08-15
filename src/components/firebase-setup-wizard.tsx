@@ -123,7 +123,7 @@ export function FirebaseSetupWizard() {
         return <Badge variant="destructive">Error de conexión</Badge>
       default:
         return <Badge variant="secondary">Desconocido</Badge>
-    </div>
+    }
   }
 
   const isConfigComplete = Object.values(config).every(value => value.trim() !== '')

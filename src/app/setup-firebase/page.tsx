@@ -78,7 +78,7 @@ export default function SetupFirebasePage() {
         return <Badge variant="destructive">Error de conexión</Badge>
       default:
         return <Badge variant="secondary">Desconocido</Badge>
-    </div>
+    }
   }
 
   return (
