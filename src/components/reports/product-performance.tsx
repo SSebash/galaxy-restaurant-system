@@ -1,7 +1,8 @@
-"use client"
+'use client'
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { TrendingUp, DollarSign, Package, Star } from 'lucide-react'
 
 interface ProductPerformanceProps {
   data: Array<{
@@ -11,63 +12,118 @@ interface ProductPerformanceProps {
     profit: number
     margin: number
   }>
-  title?: string
-  description?: string
 }
 
-export function ProductPerformance({ data, title = "Rendimiento de Productos", description = "Análisis de rentabilidad por producto" }: ProductPerformanceProps) {
-  if (!data || !Array.isArray(data) || data.length === 0) {
-    return (
-      <Card className="bg-slate-800 border-slate-700">
-        <CardHeader>
-          <CardTitle className="text-white">{title}</CardTitle>
-          <CardDescription className="text-slate-400">{description}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="h-[300px] w-full flex items-center justify-center">
-            <p className="text-slate-400">No hay datos disponibles</p>
-          </div>
-        </CardContent>
-      </Card>
-    )
+export function ProductPerformance({ data }: ProductPerformanceProps) {
+  const sortedData = [...data].sort((a, b) => b.profit - a.profit)
+  const totalRevenue = data.reduce((sum, item) => sum + item.revenue, 0)
+  const totalProfit = data.reduce((sum, item) => sum + item.profit, 0)
+  const averageMargin = data.reduce((sum, item) => sum + item.margin, 0) / data.length
+
+  const getPerformanceRating = (margin: number) => {
+    if (margin >= 60) return { rating: 'Excelente', color: 'default', icon: Star }
+    if (margin >= 50) return { rating: 'Bueno', color: 'secondary', icon: TrendingUp }
+    if (margin >= 40) return { rating: 'Regular', color: 'outline', icon: Package }
+    return { rating: 'Bajo', color: 'destructive', icon: Package }
   }
 
-  const maxRevenue = Math.max(...data.map(d => d.revenue || 0))
-  
   return (
     <Card className="bg-slate-800 border-slate-700">
       <CardHeader>
-        <CardTitle className="text-white">{title}</CardTitle>
-        <CardDescription className="text-slate-400">{description}</CardDescription>
+        <CardTitle className="flex items-center gap-2">
+          <TrendingUp className="h-5 w-5 text-purple-400" />
+          Rendimiento de Productos
+        </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="h-[300px] w-full space-y-3">
-          {data.map((item, index) => (
-            <div key={index} className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-white font-medium">{item.name || 'N/A'}</span>
-                <div className="flex items-center gap-2">
-                  <Badge variant={item.margin > 30 ? 'default' : item.margin > 15 ? 'secondary' : 'destructive'}>
-                    {item.margin || 0}%
+        <div className="grid grid-cols-3 gap-4 mb-6">
+          <div className="text-center">
+            <div className="text-2xl font-bold text-blue-400">${totalRevenue.toLocaleString()}</div>
+            <p className="text-xs text-slate-400">Ingresos Totales</p>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-green-400">${totalProfit.toLocaleString()}</div>
+            <p className="text-xs text-slate-400">Beneficios Totales</p>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-yellow-400">{averageMargin.toFixed(1)}%</div>
+            <p className="text-xs text-slate-400">Margen Promedio</p>
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          {sortedData.map((item, index) => {
+            const performance = getPerformanceRating(item.margin)
+            const PerformanceIcon = performance.icon
+            const revenuePercentage = (item.revenue / totalRevenue) * 100
+            const profitPercentage = (item.profit / totalProfit) * 100
+            
+            return (
+              <div key={index} className="p-3 bg-slate-700/50 rounded-lg">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <PerformanceIcon className="h-4 w-4 text-yellow-400" />
+                    <span className="font-medium text-white">{item.name}</span>
+                    {index === 0 && <Badge variant="default">Más Rentable</Badge>}
+                  </div>
+                  <Badge variant={performance.color as any}>
+                    {performance.rating}
                   </Badge>
-                  <span className="text-sm text-slate-400">
-                    ${(item.profit || 0).toLocaleString()}
-                  </span>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-2 text-sm mb-2">
+                  <div className="text-slate-400">
+                    <DollarSign className="inline h-3 w-3 mr-1" />
+                    <span className="text-white">${item.revenue.toLocaleString()}</span> ({revenuePercentage.toFixed(1)}%)
+                  </div>
+                  <div className="text-slate-400">
+                    <TrendingUp className="inline h-3 w-3 mr-1" />
+                    <span className="text-white">${item.profit.toLocaleString()}</span> ({profitPercentage.toFixed(1)}%)
+                  </div>
+                </div>
+                
+                <div className="flex items-center justify-between text-sm">
+                  <div className="text-slate-400">
+                    Costo: ${item.cost.toLocaleString()}
+                  </div>
+                  <div className="text-slate-400">
+                    Margen: {item.margin}%
+                  </div>
+                </div>
+                
+                <div className="mt-2">
+                  <div className="w-full bg-slate-600 rounded-full h-2">
+                    <div 
+                      className="bg-purple-400 h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${item.margin}%` }}
+                    ></div>
+                  </div>
                 </div>
               </div>
-              <div className="w-full bg-slate-700 rounded-full h-2">
-                <div 
-                  className={`h-2 rounded-full transition-all duration-300 ${item.margin > 30 ? 'bg-green-500' : item.margin > 15 ? 'bg-yellow-500' : 'bg-red-500'}`}
-                  style={{ width: `${maxRevenue > 0 ? ((item.revenue || 0) / maxRevenue) * 100 : 0}%` }}
-                />
-              </div>
-              <div className="flex justify-between text-xs text-slate-500">
-                <span>Ingresos: ${(item.revenue || 0).toLocaleString()}</span>
-                <span>Costo: ${(item.cost || 0).toLocaleString()}</span>
-              </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
+
+        <div className="mt-4 p-3 bg-slate-700/50 rounded-lg">
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-slate-400">Resumen de Rendimiento</span>
+            <div className="flex items-center gap-2">
+              <Badge variant={averageMargin >= 50 ? 'default' : 'secondary'}>
+                {averageMargin >= 50 ? 'Buen Rendimiento' : 'Rendimiento Regular'}
+              </Badge>
+              <span className={`text-sm font-medium ${averageMargin >= 50 ? 'text-green-400' : 'text-yellow-400'}`}>
+                {averageMargin.toFixed(1)}%
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {data.length === 0 && (
+          <div className="text-center py-4">
+            <TrendingUp className="h-12 w-12 text-slate-500 mx-auto mb-2" />
+            <p className="text-slate-400">No hay datos de rendimiento disponibles</p>
+          </div>
+        )}
       </CardContent>
     </Card>
   )

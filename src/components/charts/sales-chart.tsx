@@ -1,6 +1,6 @@
-"use client"
+'use client'
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 
 interface SalesChartProps {
   data: Array<{
@@ -8,56 +8,40 @@ interface SalesChartProps {
     sales: number
     orders: number
   }>
-  title?: string
-  description?: string
 }
 
-export function SalesChart({ data, title = "Ventas por Hora", description = "Distribución de ventas durante el día" }: SalesChartProps) {
-  if (!data || !Array.isArray(data) || data.length === 0) {
-    return (
-      <Card className="bg-slate-800 border-slate-700">
-        <CardHeader>
-          <CardTitle className="text-white">{title}</CardTitle>
-          <CardDescription className="text-slate-400">{description}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="h-[300px] w-full flex items-center justify-center">
-            <p className="text-slate-400">No hay datos disponibles</p>
-          </div>
-        </CardContent>
-      </Card>
-    )
-  }
-
-  const maxSales = Math.max(...data.map(d => d.sales || 0))
-  
+export function SalesChart({ data }: SalesChartProps) {
   return (
-    <Card className="bg-slate-800 border-slate-700">
-      <CardHeader>
-        <CardTitle className="text-white">{title}</CardTitle>
-        <CardDescription className="text-slate-400">{description}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="h-[300px] w-full space-y-3">
-          {data.map((item, index) => (
-            <div key={index} className="space-y-1">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-slate-400">{item.hour || 'N/A'}</span>
-                <span className="text-white font-medium">${(item.sales || 0).toLocaleString()}</span>
-              </div>
-              <div className="w-full bg-slate-700 rounded-full h-3">
-                <div 
-                  className="bg-green-500 h-3 rounded-full transition-all duration-300"
-                  style={{ width: `${maxSales > 0 ? ((item.sales || 0) / maxSales) * 100 : 0}%` }}
-                />
-              </div>
-              <div className="text-xs text-slate-500">
-                {(item.orders || 0)} pedidos
-              </div>
-            </div>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
+    <ResponsiveContainer width="100%" height={300}>
+      <LineChart data={data}>
+        <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+        <XAxis 
+          dataKey="hour" 
+          stroke="#9CA3AF"
+          tick={{ fill: '#9CA3AF' }}
+        />
+        <YAxis 
+          stroke="#9CA3AF"
+          tick={{ fill: '#9CA3AF' }}
+        />
+        <Tooltip 
+          contentStyle={{ 
+            backgroundColor: '#1F2937', 
+            border: '1px solid #374151',
+            borderRadius: '0.5rem',
+            color: '#F9FAFB'
+          }}
+          labelStyle={{ color: '#F9FAFB' }}
+        />
+        <Line 
+          type="monotone" 
+          dataKey="sales" 
+          stroke="#8B5CF6" 
+          strokeWidth={2}
+          dot={{ fill: '#8B5CF6', strokeWidth: 2, r: 4 }}
+          activeDot={{ r: 6, fill: '#8B5CF6' }}
+        />
+      </LineChart>
+    </ResponsiveContainer>
   )
 }

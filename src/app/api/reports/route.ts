@@ -273,6 +273,14 @@ export async function GET(request: NextRequest) {
     const startDate = searchParams.get('startDate')
     const endDate = searchParams.get('endDate')
 
+    // Validar parámetros
+    if (!reportType || typeof reportType !== 'string') {
+      return NextResponse.json(
+        { error: 'Tipo de reporte inválido' },
+        { status: 400 }
+      )
+    }
+
     // Datos simulados para demostración
     switch (reportType) {
       case 'sales':
@@ -461,88 +469,94 @@ export async function GET(request: NextRequest) {
       case 'promotions':
         const promotionsData: PromotionAnalysis[] = [
           { promotionName: '2x1 Hamburguesas', type: 'Descuento', discount: 50, salesIncrease: 25, revenueGenerated: 3200, cost: 800, roi: 3.0 },
-          { promotionName: 'Happy Hour', type: 'Descuento', discount: 30, salesIncrease: 40, revenueGenerated: 2850, cost: 855, roi: 2.3 },
-          { promotionName: 'Menú del Día', type: 'Combo', discount: 20, salesIncrease: 15, revenueGenerated: 1950, cost: 390, roi: 4.0 },
+          { promotionName: 'Combo Familiar', type: 'Paquete', discount: 20, salesIncrease: 15, revenueGenerated: 2800, cost: 600, roi: 3.7 },
+          { promotionName: 'Happy Hour', type: 'Descuento', discount: 30, salesIncrease: 40, revenueGenerated: 1950, cost: 450, roi: 3.3 },
         ]
         return NextResponse.json(promotionsData)
 
       case 'competitors':
         const competitorsData: CompetitorAnalysis[] = [
-          { competitorName: 'Restaurant A', distance: 0.5, priceLevel: 3, qualityRating: 4.2, marketShare: 25, strengths: ['Ubicación', 'Precio'], weaknesses: ['Servicio'] },
-          { competitorName: 'Restaurant B', distance: 1.2, priceLevel: 4, qualityRating: 4.5, marketShare: 20, strengths: ['Calidad', 'Ambiente'], weaknesses: ['Precio'] },
-          { competitorName: 'Restaurant C', distance: 2.0, priceLevel: 2, qualityRating: 3.8, marketShare: 15, strengths: ['Precio'], weaknesses: ['Calidad'] },
+          { competitorName: 'Restaurante A', distance: 0.5, priceLevel: 4, qualityRating: 4.2, marketShare: 25, strengths: ['Ubicación', 'Servicio'], weaknesses: ['Precio', 'Variedad'] },
+          { competitorName: 'Restaurante B', distance: 1.2, priceLevel: 3, qualityRating: 3.8, marketShare: 18, strengths: ['Precio', 'Variedad'], weaknesses: ['Ubicación', 'Calidad'] },
+          { competitorName: 'Restaurante C', distance: 2.0, priceLevel: 5, qualityRating: 4.5, marketShare: 15, strengths: ['Calidad', 'Ambiente'], weaknesses: ['Precio', 'Ubicación'] },
         ]
         return NextResponse.json(competitorsData)
 
       case 'labor':
         const laborData: LaborAnalysis[] = [
-          { period: 'Enero', laborCost: 12000, laborCostPercentage: 28, revenue: 42857, productivity: 95, overtimeHours: 45 },
-          { period: 'Febrero', laborCost: 12500, laborCostPercentage: 30, revenue: 41667, productivity: 92, overtimeHours: 52 },
-          { period: 'Marzo', laborCost: 11800, laborCostPercentage: 26, revenue: 45385, productivity: 98, overtimeHours: 38 },
+          { period: 'Enero', laborCost: 12000, laborCostPercentage: 28, revenue: 42857, productivity: 3.57, overtimeHours: 45 },
+          { period: 'Febrero', laborCost: 12500, laborCostPercentage: 27, revenue: 46296, productivity: 3.70, overtimeHours: 52 },
+          { period: 'Marzo', laborCost: 11800, laborCostPercentage: 26, revenue: 45385, productivity: 3.85, overtimeHours: 38 },
         ]
         return NextResponse.json(laborData)
 
       case 'energy':
         const energyData: EnergyAnalysis[] = [
-          { equipment: 'Refrigerador', energyConsumption: 450, cost: 135, efficiency: 92, usageHours: 720, status: 'GOOD' },
-          { equipment: 'Horno', energyConsumption: 280, cost: 84, efficiency: 88, usageHours: 240, status: 'EXCELLENT' },
-          { equipment: 'Aire Acondicionado', energyConsumption: 680, cost: 204, efficiency: 78, usageHours: 480, status: 'FAIR' },
+          { equipment: 'Horno Eléctrico', energyConsumption: 450, cost: 135, efficiency: 85, usageHours: 8, status: 'GOOD' },
+          { equipment: 'Nevera Comercial', energyConsumption: 320, cost: 96, efficiency: 92, usageHours: 24, status: 'EXCELLENT' },
+          { equipment: 'Aire Acondicionado', energyConsumption: 280, cost: 84, efficiency: 78, usageHours: 6, status: 'FAIR' },
         ]
         return NextResponse.json(energyData)
 
       case 'maintenance':
         const maintenanceData: MaintenanceAnalysis[] = [
-          { equipment: 'Refrigerador', maintenanceCost: 250, downtime: 4, lastMaintenance: '2024-01-10', nextMaintenance: '2024-04-10', condition: 'GOOD' },
-          { equipment: 'Horno', maintenanceCost: 180, downtime: 2, lastMaintenance: '2024-01-05', nextMaintenance: '2024-04-05', condition: 'EXCELLENT' },
-          { equipment: 'Lavavajillas', maintenanceCost: 320, downtime: 8, lastMaintenance: '2023-12-20', nextMaintenance: '2024-03-20', condition: 'FAIR' },
+          { equipment: 'Horno', maintenanceCost: 250, downtime: 4, lastMaintenance: '2024-01-10', nextMaintenance: '2024-04-10', condition: 'GOOD' },
+          { equipment: 'Nevera', maintenanceCost: 180, downtime: 2, lastMaintenance: '2024-01-05', nextMaintenance: '2024-04-05', condition: 'EXCELLENT' },
+          { equipment: 'Lavavajillas', maintenanceCost: 320, downtime: 8, lastMaintenance: '2024-01-15', nextMaintenance: '2024-03-15', condition: 'FAIR' },
         ]
         return NextResponse.json(maintenanceData)
 
-      case 'risks':
-        const risksData: RiskAnalysis[] = [
-          { riskCategory: 'Falla de Equipo', riskLevel: 7, probability: 25, impact: 40, mitigation: 'Mantenimiento preventivo', status: 'MONITORED' },
-          { riskCategory: 'Falta de Personal', riskLevel: 6, probability: 30, impact: 35, mitigation: 'Contratación temporal', status: 'ACCEPTED' },
-          { riskCategory: 'Aumento de Costos', riskLevel: 8, probability: 40, impact: 50, mitigation: 'Diversificación proveedores', status: 'MITIGATED' },
+      case 'risk':
+        const riskData: RiskAnalysis[] = [
+          { riskCategory: 'Falta de Insumos', riskLevel: 7, probability: 6, impact: 8, mitigation: 'Mantenimiento de stock mínimo', status: 'MONITORED' },
+          { riskCategory: 'Fallas de Equipo', riskLevel: 5, probability: 4, impact: 7, mitigation: 'Mantenimiento preventivo', status: 'MITIGATED' },
+          { riskCategory: 'Personal Insuficiente', riskLevel: 6, probability: 5, impact: 6, mitigation: 'Contratación de personal temporal', status: 'ACCEPTED' },
         ]
-        return NextResponse.json(risksData)
+        return NextResponse.json(riskData)
 
       case 'capacity':
         const capacityData: CapacityAnalysis[] = [
-          { area: 'Restaurante', currentCapacity: 80, maximumCapacity: 100, utilizationRate: 80, expansionNeeded: false, estimatedCost: 0 },
-          { area: 'Cocina', currentCapacity: 45, maximumCapacity: 50, utilizationRate: 90, expansionNeeded: true, estimatedCost: 25000 },
-          { area: 'Estacionamiento', currentCapacity: 25, maximumCapacity: 40, utilizationRate: 62.5, expansionNeeded: false, estimatedCost: 0 },
+          { area: 'Cocina', currentCapacity: 85, maximumCapacity: 100, utilizationRate: 85, expansionNeeded: false, estimatedCost: 0 },
+          { area: 'Comedor', currentCapacity: 48, maximumCapacity: 60, utilizationRate: 80, expansionNeeded: false, estimatedCost: 0 },
+          { area: 'Almacén', currentCapacity: 75, maximumCapacity: 80, utilizationRate: 94, expansionNeeded: true, estimatedCost: 5000 },
         ]
         return NextResponse.json(capacityData)
 
       case 'quality':
         const qualityData: QualityAnalysis[] = [
-          { category: 'Comida', qualityScore: 92, inspections: 15, issues: 2, lastInspection: '2024-01-15', trend: 'IMPROVING' },
-          { category: 'Servicio', qualityScore: 88, inspections: 12, issues: 3, lastInspection: '2024-01-14', trend: 'STABLE' },
-          { category: 'Limpieza', qualityScore: 95, inspections: 18, issues: 1, lastInspection: '2024-01-13', trend: 'IMPROVING' },
+          { category: 'Comida', qualityScore: 4.5, inspections: 45, issues: 3, lastInspection: '2024-01-15', trend: 'IMPROVING' },
+          { category: 'Servicio', qualityScore: 4.2, inspections: 38, issues: 5, lastInspection: '2024-01-14', trend: 'STABLE' },
+          { category: 'Limpieza', qualityScore: 4.0, inspections: 42, issues: 7, lastInspection: '2024-01-13', trend: 'IMPROVING' },
         ]
         return NextResponse.json(qualityData)
 
       case 'sustainability':
         const sustainabilityData: SustainabilityAnalysis[] = [
-          { initiative: 'Panel Solar', category: 'Energía', implementationDate: '2024-01-01', cost: 15000, savings: 3000, roi: 0.2, status: 'ACTIVE' },
-          { initiative: 'Reciclaje', category: 'Residuos', implementationDate: '2023-12-01', cost: 2500, savings: 800, roi: 0.32, status: 'ACTIVE' },
-          { initiative: 'Riego Eficiente', category: 'Agua', implementationDate: '2024-02-01', cost: 5000, savings: 1200, roi: 0.24, status: 'PLANNED' },
+          { initiative: 'Reciclaje de Aceite', category: 'Medio Ambiente', implementationDate: '2024-01-01', cost: 500, savings: 200, roi: 0.4, status: 'ACTIVE' },
+          { initiative: 'Reduccción de Plástico', category: 'Medio Ambiente', implementationDate: '2024-02-01', cost: 800, savings: 350, roi: 0.44, status: 'ACTIVE' },
+          { initiative: 'Eficiencia Energética', category: 'Energía', implementationDate: '2024-03-01', cost: 2000, savings: 1200, roi: 0.6, status: 'PLANNED' },
         ]
         return NextResponse.json(sustainabilityData)
 
       case 'innovation':
         const innovationData: InnovationAnalysis[] = [
-          { innovation: 'App de Pedidos', category: 'Tecnología', developmentStage: 'Beta', investment: 25000, expectedReturn: 50000, riskLevel: 6, status: 'TESTING' },
-          { innovation: 'Menú Digital', category: 'Tecnología', developmentStage: 'Diseño', investment: 15000, expectedReturn: 30000, riskLevel: 4, status: 'DEVELOPMENT' },
-          { innovation: 'Delivery Propio', category: 'Servicio', developmentStage: 'Investigación', investment: 40000, expectedReturn: 80000, riskLevel: 8, status: 'RESEARCH' },
+          { innovation: 'Menú Digital', category: 'Tecnología', developmentStage: 'Testing', investment: 3000, expectedReturn: 8000, riskLevel: 3, status: 'TESTING' },
+          { innovation: 'Delivery Propio', category: 'Servicio', developmentStage: 'Development', investment: 5000, expectedReturn: 12000, riskLevel: 4, status: 'DEVELOPMENT' },
+          { innovation: 'App Móvil', category: 'Tecnología', developmentStage: 'Research', investment: 8000, expectedReturn: 20000, riskLevel: 5, status: 'RESEARCH' },
         ]
         return NextResponse.json(innovationData)
 
       default:
-        return NextResponse.json({ error: 'Invalid report type' }, { status: 400 })
+        return NextResponse.json(
+          { error: 'Tipo de reporte no soportado' },
+          { status: 400 }
+        )
     }
   } catch (error) {
-    console.error('Error generating report:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    console.error('Error en reports API:', error)
+    return NextResponse.json(
+      { error: 'Error interno del servidor' },
+      { status: 500 }
+    )
   }
 }
