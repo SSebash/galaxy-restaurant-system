@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
   // 禁用 Next.js 热重载，由 nodemon 处理重编译
   reactStrictMode: false,
   // Allow preview domain for development
-  allowedDevOrigins: ['preview-chat-c305ab68-3d8f-450f-b75e-a4223fabacce.space.z.ai'],
+  allowedDevOrigins: ['localhost:3000', '127.0.0.1:3000'],
   webpack: (config, { dev }) => {
     if (dev) {
       // 禁用 webpack 的热模块替换
